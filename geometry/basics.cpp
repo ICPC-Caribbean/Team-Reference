@@ -30,6 +30,7 @@ double cross(point a, point b) { return imag(conj(a) * b); }
 
 double area2(point a, point b, point c) { return cross(b - a, c - a); }
 
+// http://judge.u-aizu.ac.jp/onlinejudge/description.jsp?id=CGL_1_C
 int ccw(point a, point b, point c)
 {
     b -= a; c -= a;
