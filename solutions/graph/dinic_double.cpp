@@ -2,6 +2,9 @@
     Name:
         A Graph Problem
 
+    Test:
+        graph/dinic.cpp
+
     Link:
         https://www.hackerrank.com/contests/w30/challenges/a-graph-problem/problem
 */

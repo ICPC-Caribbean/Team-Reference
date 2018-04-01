@@ -2,6 +2,9 @@
     Name:
         Fast Maximum Flow
 
+    Test:
+        graph/dinic.cpp
+
     Link:
         http://www.spoj.com/problems/FASTFLOW/
 
