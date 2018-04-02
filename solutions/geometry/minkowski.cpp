@@ -75,61 +75,39 @@ polygon minkowski(polygon &A, polygon &B){
 }
 
 struct convex_container{
-    polygon upper_envelop;
-    polygon lower_envelop;
+    polygon pol;
 
-    convex_container(polygon p){
-        int a = min_element(p.begin(), p.end()) - p.begin();
-        int b = max_element(p.begin(), p.end()) - p.begin();
+    // Polygon MUST be in counter clockwise order
+    convex_container(polygon p) : pol(p){
+        int pos = 0;
 
-        int pnt = a;
-        while (pnt != b){
-            lower_envelop.push_back(p[pnt++]);
-            if (pnt == p.size()) pnt = 0;
+        for (int i = 1; i < p.size(); ++i){
+            if (p[i].imag() < p[pos].imag() ||
+                (p[i].imag() == p[pos].imag() && p[i].real() < p[pos].real()))
+                pos = i;
         }
-        lower_envelop.push_back(p[pnt]);
 
-        while (lower_envelop.back().real() == lower_envelop[lower_envelop.size() - 2].real())
-            lower_envelop.pop_back();
-
-        while (pnt != a){
-            upper_envelop.push_back(p[pnt++]);
-            if (pnt == p.size()) pnt = 0;
-        }
-        upper_envelop.push_back(p[pnt]);
-
-        while (upper_envelop.back().real() == upper_envelop[upper_envelop.size() - 2].real())
-            upper_envelop.pop_back();
-
-        reverse(upper_envelop.begin(), upper_envelop.end());
+        rotate(pol.begin(), pol.begin() + pos, pol.end());
     }
 
     bool contains(point p){
-        if (p.real() < upper_envelop[0].real() || p.real() > upper_envelop.back().real())
+        point c = pol[0];
+
+        if (p.imag() < c.imag() || cross(pol.back() - c, p - c) > 0)
             return false;
 
-        int lo = 0, hi = upper_envelop.size() - 1;
+        int lo = 1, hi = pol.size() - 1;
 
         while (lo + 1 < hi){
-            int m = (lo + hi) >> 1;
-            if (upper_envelop[m].real() <= p.real()) lo = m;
-            else hi = m;
+            int m = (lo + hi) / 2;
+
+            if (cross(pol[m] - c, p - c) >= 0)
+                lo = m;
+            else
+                hi = m;
         }
 
-        if (cross(upper_envelop[lo + 1] - upper_envelop[lo], p - upper_envelop[lo]) > 0)
-            return false;
-
-        lo = 0, hi = lower_envelop.size() - 1;
-        while (lo + 1 < hi){
-            int m = (lo + hi) >> 1;
-            if (lower_envelop[m].real() <= p.real()) lo = m;
-            else hi = m;
-        }
-
-        if (cross(p - lower_envelop[lo], lower_envelop[lo + 1] - lower_envelop[lo]) > 0)
-            return false;
-
-        return true;
+        return cross(pol[lo + 1] - pol[lo], p - pol[lo]) >= 0;
     }
 };
 
