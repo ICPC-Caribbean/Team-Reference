@@ -16,7 +16,7 @@
 bool miller_rabin(ll n, int itern = 20) {
     if (n <= 1 || (n > 2 && n % 2 == 0)) return false;
 
-    function<bool(ll, int, ll, ll)> suspect = [&](ll a, int s, ll d, ll n) {
+    auto suspect = [&](ll a, int s, ll d, ll n) {
         ll x = powmod(a, d, n);
         if (x == 1) return true;
         for (int r = 0; r < s; ++r) {
